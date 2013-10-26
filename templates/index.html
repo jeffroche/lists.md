@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Index, yo</h3>
+
+{% if lists %}
+    <ul>
+    {% for list_file in lists %}
+      <li><a href="/{{ list_file.name }}/">{{ list_file.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No lists found</p>
+{% endif %}
+
+{% endblock content %}
