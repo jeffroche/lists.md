@@ -13,7 +13,7 @@ if not HEROKU:
     app.debug = True
 
 DROPBOX_ACCESS_TOKEN = os.environ.get('DROPBOX_TOKEN')
-DROPBOX_LIST_FOLDER = '/lists test folder'
+DROPBOX_LIST_FOLDER = os.environ.get('DROPBOX_LIST_FOLDER')
 
 db_client = listsdotmd.connect_to_dropbox(
     token=DROPBOX_ACCESS_TOKEN)
