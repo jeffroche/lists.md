@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.abspath('..'))
 import listsdotmd
 import unittest
 from dropbox.rest import ErrorResponse
-import web
+from datetime import datetime as dt
 
 
 class DropboxTestSuite(unittest.TestCase):
@@ -65,6 +65,13 @@ class ListsdotmdTestSuite(unittest.TestCase):
         markup = listsdotmd.convert_list_to_html(list_str)
         _expected_html = u'<h1>List 1</h1>\n\n<ul>\n<li>list item 1</li>\n<li>list item 2</li>\n</ul>\n'
         self.assertEqual(markup, _expected_html)
+
+    def test_folder_last_update_time(self):
+        db_client = MockDropboxClient()
+        last_updated = listsdotmd.last_update_time(db_client, '/')
+        last_updated_dt = dt.strptime(last_updated, '%a, %d %b %Y %H:%M:%S +0000')
+        self.assertEqual(last_updated_dt,
+            dt(2011, 4, 27, 22, 18, 51))
 
 
 class MockDropboxClient(object):
@@ -134,6 +141,7 @@ class MockDropboxClient(object):
                 'path': '/',
                 'root': 'app_folder',
                 'size': '0 bytes',
+                "modified": "Wed, 27 Apr 2011 22:18:51 +0000",
                 'thumb_exists': False
             }
         else:

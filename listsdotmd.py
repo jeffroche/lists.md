@@ -29,6 +29,15 @@ def index_lists(dropbox_client, folder):
     return md_files
 
 
+def last_update_time(dropbox_client, file_or_folder):
+    """Returns the date of the last time file/folder was updated
+    Date is returned as a string in the following format:
+    https://www.dropbox.com/developers/core/docs#date-format
+    """
+    folder_metadata = dropbox_client.metadata(file_or_folder)
+    return folder_metadata['modified']
+
+
 def load_list_as_string(dropbox_client, list_path):
     """Returns the list file text
     If the file doesn't exist, Dropbox throws an _ Exception
