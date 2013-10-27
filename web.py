@@ -5,7 +5,7 @@ from dropbox.rest import ErrorResponse
 from markdown2 import MarkdownError
 
 
-HEROKU = os.environ.get('DROPBOX_TOKEN', False)
+HEROKU = os.environ.get('HEROKU', False)
 
 app = Flask(__name__)
 
