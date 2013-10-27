@@ -7,7 +7,7 @@ import redis
 from datetime import datetime as dt
 
 
-HEROKU = os.environ.get('DROPBOX_TOKEN', False)
+HEROKU = os.environ.get('HEROKU', False)
 
 app = Flask(__name__)
 
