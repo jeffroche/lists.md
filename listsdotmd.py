@@ -29,20 +29,23 @@ def index_lists(dropbox_client, folder):
     return md_files
 
 
-def last_update_time(dropbox_client, file_or_folder):
-    """Returns the date of the last time file/folder was updated
-    Date is returned as a string in the following format:
-    https://www.dropbox.com/developers/core/docs#date-format
-    """
-    folder_metadata = dropbox_client.metadata(file_or_folder)
-    return folder_metadata['modified']
+def get_folder_hash(dropbox_client, folder):
+    """Returns the hash of the folder"""
+    metadata = dropbox_client.metadata(folder)
+    return metadata['hash']
+
+
+def get_file_rev(dropbox_client, file_path):
+    """Returns the unique identifier for the current file revision"""
+    metadata = dropbox_client.metadata(file_path)
+    return metadata['rev']
 
 
 def load_list_as_string(dropbox_client, list_path):
     """Returns the list file text
     If the file doesn't exist, Dropbox throws an _ Exception
     """
-    f, metadata = dropbox_client.get_file_and_metadata(list_path)
+    f = dropbox_client.get_file(list_path)
     return f.read()
 
 

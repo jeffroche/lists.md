@@ -7,7 +7,6 @@ sys.path.insert(0, os.path.abspath('..'))
 import listsdotmd
 import unittest
 from dropbox.rest import ErrorResponse
-from datetime import datetime as dt
 
 
 class DropboxTestSuite(unittest.TestCase):
@@ -66,19 +65,22 @@ class ListsdotmdTestSuite(unittest.TestCase):
         _expected_html = u'<h1>List 1</h1>\n\n<ul>\n<li>list item 1</li>\n<li>list item 2</li>\n</ul>\n'
         self.assertEqual(markup, _expected_html)
 
-    def test_folder_last_update_time(self):
+    def test_get_folder_hash(self):
         db_client = MockDropboxClient()
-        last_updated = listsdotmd.last_update_time(db_client, '/')
-        last_updated_dt = dt.strptime(last_updated, '%a, %d %b %Y %H:%M:%S +0000')
-        self.assertEqual(last_updated_dt,
-            dt(2011, 4, 27, 22, 18, 51))
+        self.assertEqual(listsdotmd.get_folder_hash(db_client, '/'),
+            'efdac89c4da886a9cece1927e6c22977')
+
+    def test_get_file_rev(self):
+        db_client = MockDropboxClient()
+        self.assertEqual(listsdotmd.get_file_rev(db_client, '/list1.md'),
+            '362e2029684fe')
 
 
 class MockDropboxClient(object):
     """A test class to mock the outputs of Dropbox"""
 
-    def metadata(self, folder):
-        if folder == '/':
+    def metadata(self, file_or_folder):
+        if file_or_folder == '/':
             result = \
             {
                 'bytes': 0,
@@ -144,27 +146,28 @@ class MockDropboxClient(object):
                 "modified": "Wed, 27 Apr 2011 22:18:51 +0000",
                 'thumb_exists': False
             }
+        elif file_or_folder == '/list1.md':
+            result = \
+            {
+                'bytes': 77,
+                'icon': 'page_white_text',
+                'is_dir': False,
+                'mime_type': 'text/plain',
+                'modified': 'Thu, 25 Aug 2011 00:03:15 +0000',
+                'path': '/list1.md',
+                'rev': '362e2029684fe',
+                'revision': 221922,
+                'root': 'dropbox',
+                'size': '77 bytes',
+                'thumb_exists': False
+            }
         else:
             raise ErrorResponseMock
         return result
 
-    def get_file_and_metadata(self, list_path):
+    def get_file(self, list_path):
         f = open(list_path)
-        metadata = \
-            {
-               'bytes': 77,
-               'icon': 'page_white_text',
-               'is_dir': False,
-               'mime_type': 'text/plain',
-               'modified': 'Thu, 25 Aug 2011 00:03:15 +0000',
-               'path': list_path,
-               'rev': '362e2029684fe',
-               'revision': 221922,
-               'root': 'dropbox',
-               'size': '77 bytes',
-               'thumb_exists': False
-            }
-        return f, metadata
+        return f
 
 class ErrorResponseMock(Exception):
     """Dropbox client would throw an ErrorResponse"""
